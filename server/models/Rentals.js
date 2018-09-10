@@ -15,7 +15,7 @@ const rentalSchema = new Schema({
   street: {
     type: String,
     required: true,
-    max: [4, "Too Short, Min 4 characters"]
+    min: [4, "Too Short, Min 4 characters"]
   },
   category: {
     type: String,
@@ -36,7 +36,8 @@ const rentalSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now()
-  }
+  },
+  user: { type: Schema.Types.ObjectId, ref: "User" }
 });
 
 module.exports = mongoose.model("Rental", rentalSchema);
