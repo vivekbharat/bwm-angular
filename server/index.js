@@ -1,11 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyparser = require("body-parser");
 
 const config = require("./config/dev");
-const Rental = require("./models/rental");
+const Rental = require("./models/Rentals");
 const Fakedb = require("./fake-db");
 
 const rentalRoutes = require("./routes/rental");
+const userRoutes = require("./routes/users");
 
 mongoose
   .connect(
@@ -23,7 +25,9 @@ mongoose
 
 const app = express();
 
-app.use("/api/v1/rental", rentalRoutes);
+app.use(bodyparser.json());
+app.use("/api/v1/rentals", rentalRoutes);
+app.use("/api/v1/users", userRoutes);
 
 const PORT = process.env.PORT || 3001;
 
