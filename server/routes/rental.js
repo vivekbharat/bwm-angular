@@ -10,8 +10,9 @@ router.get("/secret", UserControl.authMiddleware, (req, res) => {
 
 router.get("/", (req, res) => {
   Rental.find({})
+    .select("-bookings")
     .then(foundRentals => {
-      res.json(foundRentals);
+      return res.json(foundRentals);
     })
     .catch(err =>
       res.status(404).json({
@@ -22,15 +23,25 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   const rentalId = req.params.id;
+
   Rental.findById(rentalId)
+    .populate("user")
+    .populate("bookings")
     .then(foundRental => {
-      res.json(foundRental);
+      return res.json(foundRental);
     })
-    .catch(err =>
-      res.status(404).json({
-        errors: { title: "Rental Error!", detail: "Could not find Rental" }
-      })
-    );
+    .catch(err => {
+      if (err) {
+        return res.status(422).send({
+          errors: [
+            {
+              title: "Rental Error!",
+              detail: "Cannot Find rental"
+            }
+          ]
+        });
+      }
+    });
 });
 
 module.exports = router;

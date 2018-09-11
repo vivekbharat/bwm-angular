@@ -7,10 +7,8 @@ const config = require("../config/dev");
 
 exports.auth = (req, res) => {
   const { email, password } = req.body;
-  console.log("It ran 1");
 
   if (!password || !email) {
-    console.log("It ran 2");
     res.status(422).send({
       errors: [
         {
@@ -20,11 +18,9 @@ exports.auth = (req, res) => {
       ]
     });
   }
-  console.log("It ran 3");
 
   Users.findOne({ email })
     .then(user => {
-      console.log("It ran 4", user);
       // console.log()
       if (!user) {
         // console.log("It ran 5", user);
@@ -46,7 +42,6 @@ exports.auth = (req, res) => {
             userId: user.id,
             username: user.username
           };
-          console.log("It ran 5", isMatch);
 
           //Sign Token
           jwt.sign(
@@ -159,9 +154,25 @@ exports.authMiddleware = (req, res, next) => {
           });
         }
       })
-      .catch(err => notAuthorized(res));
+      .catch(err =>
+        res.status(401).json({
+          errors: [
+            {
+              title: "Not Authorized",
+              detail: "Please Login to access"
+            }
+          ]
+        })
+      );
   } else {
-    return notAuthorized();
+    return res.status(401).json({
+      errors: [
+        {
+          title: "Not Authorized",
+          detail: "Please Login to access"
+        }
+      ]
+    });
   }
 };
 
@@ -169,13 +180,13 @@ const parseToken = token => {
   return jwt.verify(token.split(" ")[1], config.SECRET);
 };
 
-const notAuthorized = res => {
-  return res.status(401).send({
-    errors: [
-      {
-        title: "Not Authorized",
-        detail: "Please Login to access"
-      }
-    ]
-  });
-};
+// const notAuthorized = res => {
+//   return res.status(401).json({
+//     errors: [
+//       {
+//         title: "Not Authorized",
+//         detail: "Please Login to access"
+//       }
+//     ]
+//   });
+// };
