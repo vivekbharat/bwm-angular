@@ -24,7 +24,13 @@ const userSchema = new Schema({
     min: [4, "Too Short, Min 4 characters"],
     required: "Password is required"
   },
-  rentals: [{ type: Schema.Types.ObjectId, ref: "Rental" }]
+  rentals: [{ type: Schema.Types.ObjectId, ref: "Rental" }],
+  bookings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Booking"
+    }
+  ]
 });
 
 userSchema.pre("save", function(next) {
